@@ -7,7 +7,7 @@ category: oldeq
 
 The [oldeq.zip](/oldeq/oldeq-zip) archive contains a couple files of interest `EQUEST.T3D`, and `EQUIP.T3D`.
 
-While `.t3d` was the extension used for one of Sony's other games, [Tanarus](/games/tanarus), the format didn't exactly match the format described by the [Tanarus .t3d file extractor, T3D](https://github.com/MrPnut/T3D).
+While `.t3d` was the extension used for one of Sony's other games, [Tanarus](/tanarus/background), the format didn't exactly match the format described by the [Tanarus .t3d file extractor, T3D](https://github.com/MrPnut/T3D).
 
 The format was simple enough to figure out, see [Fastfile.ksy](/kaitai/structs#fastfileksy) for details.
 <alert type="warning">
@@ -173,7 +173,7 @@ Extracts `EQUEST.T3D` and `EQUIP.T3D` with [client side JS](/kaitai/js-parsers#f
 
 ### WLD/SPH files
 
-Mixed in with the `.bmp` files are `.sph` and `.wld` files in an uncompressed ascii format that is (mostly) compaitible with [Tanarus'](/games/tanarus) compressor tool.
+Mixed in with the `.bmp` files are `.sph` and `.wld` files in an uncompressed ascii format that is (mostly) compaitible with [Tanarus'](/tanarus/background) compressor tool.
 See [WLDCOM.EXE](../wldcom/overview) for more info.
 
 <code-group>
