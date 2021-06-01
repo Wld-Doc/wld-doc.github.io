@@ -1,0 +1,21 @@
+// FUN_0040b3e0
+// Example: oldeq/EQUEST.T3D/EQUEST.WLD
+// TODO: figure out the list of render types; this might be a large list.
+// TEXTURE3AMBIENT
+// TRANSPARENT
+// USERDEFINED %d
+RENDERMETHOD %s
+RENDERINFO
+  PEN %d
+  BRIGHTNESS %f
+  SCALEDAMBIENT %f
+  // Unsure if something besides SIMPLESPRITEINST can go here
+  SIMPLESPRITEINST
+    TAG "%s"
+  ENDSIMPLESPRITEINST
+  UVORIGIN %f %f %f
+  UAXIS 1.0 %f %f %f
+  VAXIS 1.0 %f %f %f
+  UV %f %f
+  TWOSIDED
+ENDRENDERINFO
