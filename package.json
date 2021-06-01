@@ -1,0 +1,21 @@
+{
+  "name": "wld-doc",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "postinstall": "patch-package"
+  },
+  "dependencies": {
+    "@nuxt/content-theme-docs": "0.10.1",
+    "kaitai-struct": "^0.9.0",
+    "nuxt": "^2.15.2",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
+    "vue-json-tree-view": "^2.1.6"
+  },
+  "devDependencies": {}
+}

@@ -1,0 +1,29 @@
+diff --git a/node_modules/prismjs/components/prism-hexdump.js b/node_modules/prismjs/components/prism-hexdump.js
+new file mode 100644
+index 0000000..6a8118a
+--- /dev/null
++++ b/node_modules/prismjs/components/prism-hexdump.js
+@@ -0,0 +1,15 @@
++(function (Prism) {
++
++	var hd = /[0-9A-Ha-h]/;
++	var boundry = /(?:\b|\s)/;
++
++	Prism.languages.hexdump = {
++		'offset': {
++			'alias': 'keyword',
++			'pattern': RegExp('^(' + hd.source + '+)(:?)', 'm')
++		},
++		'string': /\s{2}\|?(.{1,16})\|?$/m,
++		'number': RegExp(boundry.source + '(' + hd.source + '{2,4})' + boundry.source)
++	};
++
++}(Prism));
+diff --git a/node_modules/prismjs/components/prism-hexdump.min.js b/node_modules/prismjs/components/prism-hexdump.min.js
+new file mode 100644
+index 0000000..4d81952
+--- /dev/null
++++ b/node_modules/prismjs/components/prism-hexdump.min.js
+@@ -0,0 +1 @@
++!function(e){var s=/[0-9A-Ha-h]/,r=/(?:\b|\s)/;Prism.languages.hexdump={offset:{alias:"keyword",pattern:RegExp("^("+s.source+"+)(:?)","m")},string:/\s{2}\|?(.{1,16})\|?$/m,number:RegExp(r.source+"("+s.source+"{2,4})"+r.source)}}();
+\ No newline at end of file

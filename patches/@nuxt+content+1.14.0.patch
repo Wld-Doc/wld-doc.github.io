@@ -1,0 +1,13 @@
+diff --git a/node_modules/@nuxt/content/parsers/markdown/handlers/code.js b/node_modules/@nuxt/content/parsers/markdown/handlers/code.js
+index bd474c0..02dcf9f 100644
+--- a/node_modules/@nuxt/content/parsers/markdown/handlers/code.js
++++ b/node_modules/@nuxt/content/parsers/markdown/handlers/code.js
+@@ -6,6 +6,8 @@ const { parseThematicBlock } = require('./utils')
+ 
+ require('prismjs/components/index')()
+ 
++require('prismjs/components/prism-hexdump')
++
+ // enable syntax highlighting on diff language
+ require('prismjs/components/prism-diff')
+ require('prismjs/plugins/diff-highlight/prism-diff-highlight')

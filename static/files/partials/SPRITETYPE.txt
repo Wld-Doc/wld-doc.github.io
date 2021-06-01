@@ -1,0 +1,11 @@
+// Sprite Type; FUN_00407ec0
+// One of these:
+// SIMPLESPRITE "%s"
+// 2DSPRITE "%s"
+// 3DSPRITE "%s"
+// 4DSPRITE "%s"
+// PARTICLESPRITE "%s"
+// COMPOSITESPRITE "%s"
+// HIERARCHICALSPRITE "%s"
+// BLITSPRITE "%s" %f %f %f %f %f %f
+// NULLSPRITE
