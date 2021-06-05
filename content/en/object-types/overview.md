@@ -5,6 +5,17 @@ position: 20
 category: object types
 ---
 
+## CPIWORLD
+
+<alert type="info">
+<strong>CPI</strong> may refer to PyroTechnix's former name, Computer Presentations, Inc.
+</alert>
+
+```c
+CPIWORLD "%s"
+ENDCPIWORLD "%s
+```
+
 ## INCLUDE
 
 ```c

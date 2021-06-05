@@ -21,12 +21,12 @@ Load the definitions into the [Kaitai WebIDE](https://ide.kaitai.io/) to interac
 source:fastfile.ksy
 ```
 
-## tanarus_t3d.ksy
+## t3d_fast_file.ksy
 
-<a href="/files/tanarus_t3d.ksy" target="_blank" download="tanarus_t3d.ksy">Download</a>
+<a href="/files/t3d_fast_file.ksy" target="_blank" download="t3d_fast_file.ksy">Download</a>
 
-```yml[tanarus_t3d.ksy]
-source:tanarus_t3d.ksy
+```yml[t3d_fast_file.ksy]
+source:t3d_fast_file.ksy
 ```
 
 ## sony_wld.ksy

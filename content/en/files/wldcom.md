@@ -1,8 +1,8 @@
 ---
-title: Game WLD file compressor - WLDCOM.EXE
+title: WLDCOM.EXE
 description: ''
 position: 10
-category: wldcom
+category: files
 ---
 
 Found in the map editor for Tanarus [Basic_MapEdit.zip](/tanarus/map-editor)
@@ -143,3 +143,9 @@ Usage:  WLDCOM [-flags] infile [outfile]
 
   </code-block>
 </code-group>
+
+## Parser Demo
+
+Parse a binary (compressed) wld file with [client side JS](/kaitai/js-parsers#sonywldjs) generated from [sony_wld.ksy](/kaitai/structs#sony_wldksy)
+
+<wld-file></wld-file>

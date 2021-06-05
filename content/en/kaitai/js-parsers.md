@@ -13,12 +13,12 @@ Generated from [fastfile.ksy](structs#fastfileksy). Click [here](/oldeq/t3d-file
 source:lib/Fastfile.js
 ```
 
-### TanarusT3d.js
+### T3dFastFile.js
 
-Generated from [tanarus_t3d.ksy](structs#tanarus_t3dksy). Click [here](/tanarus/t3d-files#js-parser) to try in your browser.
+Generated from [t3d_fast_file.ksy](structs#t3d_fast_fileksy). Click [here](/files/ffcreate#js-parser) to try in your browser.
 
-```js[TanarusT3d.js]
-source:lib/TanarusT3d.js
+```js[T3dFastFile.js]
+source:lib/T3dFastFile.js
 ```
 
 

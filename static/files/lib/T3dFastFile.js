@@ -6,18 +6,18 @@
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory(require('kaitai-struct/KaitaiStream'));
   } else {
-    root.TanarusT3d = factory(root.KaitaiStream);
+    root.T3dFastFile = factory(root.KaitaiStream);
   }
 }(this, function (KaitaiStream) {
-var TanarusT3d = (function() {
-  function TanarusT3d(_io, _parent, _root) {
+var T3dFastFile = (function() {
+  function T3dFastFile(_io, _parent, _root) {
     this._io = _io;
     this._parent = _parent;
     this._root = _root || this;
 
     this._read();
   }
-  TanarusT3d.prototype._read = function() {
+  T3dFastFile.prototype._read = function() {
     this.header = new Header(this._io, this, this._root);
     this.files = new Array((this.header.numOffsets - 1));
     for (var i = 0; i < (this.header.numOffsets - 1); i++) {
@@ -30,7 +30,7 @@ var TanarusT3d = (function() {
     }
   }
 
-  var Header = TanarusT3d.Header = (function() {
+  var Header = T3dFastFile.Header = (function() {
     function Header(_io, _parent, _root) {
       this._io = _io;
       this._parent = _parent;
@@ -54,7 +54,7 @@ var TanarusT3d = (function() {
     return Header;
   })();
 
-  var File = TanarusT3d.File = (function() {
+  var File = T3dFastFile.File = (function() {
     function File(_io, _parent, _root, i) {
       this._io = _io;
       this._parent = _parent;
@@ -111,7 +111,7 @@ var TanarusT3d = (function() {
     return File;
   })();
 
-  return TanarusT3d;
+  return T3dFastFile;
 })();
-return TanarusT3d;
+return T3dFastFile;
 }));

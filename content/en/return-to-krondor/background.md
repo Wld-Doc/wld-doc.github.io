@@ -1,8 +1,8 @@
 ---
-title: 'Return to Krondor'
+title: Background
 description: ''
 position: 15
-category: games
+category: return to krondor
 ---
 
 <alert type="warning">

@@ -1,6 +1,8 @@
 meta:
-  id: tanarus_t3d
-  file-extension: t3d
+  id: t3d_fast_file
+  file-extension:
+    - t3d
+    - ff
   endian: le
 
 seq:

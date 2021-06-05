@@ -25,6 +25,8 @@ wanted to document my attempts at leveraging other games and files to further de
 
 Various things I need to add or have come across but havn't documented yet:
 
+- Reorg parsers into their own category.
+
 - Create section for ascii files found in `global4_chr.s3d`
   - `*.mdf`
   - `*.sps`
@@ -36,6 +38,7 @@ Various things I need to add or have come across but havn't documented yet:
   - `.adf` - actor definition file?
   - `.ant` - (unk - included instead of a .sps)
   - `.dep` - file dependency
+  - RtK has a whole slew of new file exts for different compressed objects.
 
 - MapEdit function `FUN_0041a810` generates an ascii "TANARUS3D Preview World" `.wld`
 
@@ -46,6 +49,8 @@ Various things I need to add or have come across but havn't documented yet:
   - > "This is our second major development deal using the True3D technology," said PyroTechnix President, Sinjin Bain, referring to last week's announcement regarding a development and licensing deal with Sony Interactive.
 
 - Ascii `.wld` snippets w/ hexdump of corresponding bin. Something like [this](/wldcom/overview#compress)
+
+- [DAG hierarchy](https://knowledge.autodesk.com/guidref/MAYAUL/2022/learn-explore/GUID-5029CF89-D420-4236-A7CF-884610828B70)
 
 ## TL;DR
 

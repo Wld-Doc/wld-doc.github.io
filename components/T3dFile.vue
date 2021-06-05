@@ -5,11 +5,7 @@
 
     <div v-if="t3d">
       <div class="grid grid-cols-3 gap-4">
-        <div v-for="file in t3d.files" :key="file.i">
-          <strong>{{ file.filename }}</strong> {{ file.filesize }}B
-          <img v-if="file.filename.toLowerCase().endsWith('.bmp')" :src="objectUrl(file)">
-          <a :href="objectUrl(file)" :download="file.filename">Download</a>
-        </div>
+        <fast-file-record v-for="file in t3d.files" :key="file.i" :file="file"></fast-file-record>
       </div>
     </div>
   </div>
@@ -17,8 +13,9 @@
 
 <script>
 import Fastfile from '../static/files/lib/Fastfile'
-import TanarusT3d from '../static/files//lib/TanarusT3d'
+import T3dFastFile from '../static/files/lib/T3dFastFile'
 import KaitaiStream from 'kaitai-struct/KaitaiStream'
+
 export default {
   props: {
     t3dType: {
@@ -29,7 +26,6 @@ export default {
   data() {
     return {
       t3d: null,
-      objectUrls: {}
     }
   },
   computed: {
@@ -37,14 +33,14 @@ export default {
       let parser;
 
       switch (this.t3dType) {
-      case 'tanarus':
-        parser = TanarusT3d;
+      case 't3dfastfile':
+        parser = T3dFastFile;
         break;
       case 'fastfile':
         parser = Fastfile;
         break;
       default:
-        parser = Fastfile;
+        parser = T3dFastFile;
       }
 
       return parser;
@@ -60,12 +56,6 @@ export default {
       this.t3d = new this.parser(stream);
       console.dir(this.t3d)
     },
-    objectUrl(file) {
-      // return URL.createObjectURL(new Blob([file.body]));
-      this.objectUrls[file.filename] = this.objectUrls[file.filename] || URL.createObjectURL(new Blob([file.body]));
-
-      return this.objectUrls[file.filename];
-    }
   }
 }
 </script>
