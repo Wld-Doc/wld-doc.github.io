@@ -89,6 +89,53 @@ types:
       - id: blue
         type: f4
 
+  sprite_pitch:
+    params:
+      - id: num_frames
+        type: u4
+    seq:
+      - id: pitch_cap
+        type: s4
+      - id: num_headings
+        type: u4
+      - id: headings
+        type: sprite_heading(num_frames)
+        repeat: expr
+        repeat-expr: num_headings
+
+  sprite_heading:
+    params:
+      - id: num_frames
+        type: u4
+    seq:
+      - id: heading_cap
+        type: s4
+      - id: frames
+        type: u4
+        repeat: expr
+        repeat-expr: num_frames
+
+  uv_info:
+    seq:
+      - id: uv_origin_x
+        type: f4
+      - id: uv_origin_y
+        type: f4
+      - id: uv_origin_z
+        type: f4
+      - id: u_axis_x
+        type: f4
+      - id: u_axis_y
+        type: f4
+      - id: u_axis_z
+        type: f4
+      - id: v_axis_x
+        type: f4
+      - id: v_axis_y
+        type: f4
+      - id: v_axis_z
+        type: f4
+
   frame_transform:
     seq:
       - id: rotate_denominator
@@ -150,6 +197,7 @@ types:
             0x3: object_type_03 # FRAME and BMINFO
             0x4: object_type_04 # SIMPLESPRITEDEF
             # 0x5: object_type_05 # merchant 25 I think
+            0x6: object_type_06
             0x8: object_type_08
             0x12: object_type_12 # TRACKDEFINITION
             0x13: object_type_13 # TRACKINSTANCE
@@ -233,6 +281,106 @@ types:
   #   TAG "PIZZA_SPRITE"
   # ENDSIMPLESPRITEINST
   # object_type_05:
+
+  # 2DSPRITEDEF
+  object_type_06:
+    doc: |
+      2DSPRITEDEF
+        2DSPRITETAG I_SWORDSPRITE
+        CENTEROFFSET 0.0 1.0 0.0
+        NUMFRAMES 2
+        SLEEP 100
+        SPRITESIZE 1.0 1.0
+        NUMPITCHES 2
+        PITCH 1
+          PITCHCAP 512
+          NUMHEADINGS 2
+          HEADING 1
+            HEADINGCAP 64
+            FRAME "isword.bmp"  sword11
+            FRAME "isword.bmp"  sword11
+          ENDHEADING 1
+          HEADING 2
+            HEADINGCAP 128
+            FRAME "isword.bmp" sword21
+            FRAME "isword.bmp"  sword11
+          ENDHEADING 2
+        ENDPITCH 1
+        PITCH 2
+          PITCHCAP 256
+          NUMHEADINGS 1
+          HEADING 1
+            HEADINGCAP 64
+            FRAME "isword.bmp"  sword11
+            FRAME "isword.bmp"  sword11
+          ENDHEADING 1
+        ENDPITCH 2
+        // Default instance: render info
+        RENDERMETHOD TEXTURE3
+        // RENDERINFO block is optional
+        RENDERINFO
+          //TWOSIDED
+          PEN 52
+          BRIGHTNESS 1.000
+          SCALEDAMBIENT 1.000
+          UVORIGIN 0.5 0.4 0.3
+          UAXIS 1.0 0.22 0.33 0.44
+          VAXIS 1.0 0.25 0.35 0.45
+        ENDRENDERINFO
+      END2DSPRITEDEF
+    seq:
+      - id: name_reference
+        type: s4
+        doc: The name of this sprite
+      - id: flags
+        type: s4
+      - id: num_frames
+        type: s4
+      - id: num_pitches
+        type: s4
+      - id: sprite_size_x
+        type: f4
+      - id: sprite_size_y
+        type: f4
+      - id: fragment
+        type: s4
+      - id: center_offset_x
+        type: f4
+        if: (flags & 0b1) == 1
+      - id: center_offset_y
+        type: f4
+        if: (flags & 0b1) == 1
+      - id: center_offset_z
+        type: f4
+        if: (flags & 0b1) == 1
+      - id: unkn_params4
+        type: f4
+      - id: sleep
+        type: s4
+        if: (flags & 0b1000) >> 3 == 1
+      - id: pitches
+        type: sprite_pitch(num_frames)
+        repeat: expr
+        repeat-expr: num_pitches
+      - id: render_method
+        type: s4
+      - id: renderinfo_flags
+        type: s4
+      - id: pen
+        type: s4
+        if: (renderinfo_flags & 0b1) == 1
+      - id: brightness
+        type: f4
+        if: (renderinfo_flags & 0b10) >> 1 == 1
+      - id: scaled_ambient
+        type: f4
+        if: (renderinfo_flags & 0b100) >> 2 == 1
+      - id: uv_info
+        type: uv_info
+        if: (renderinfo_flags & 0b10000) >> 4 == 1
+    instances:
+      name:
+        type: string_hash_reference(name_reference)
 
   # Added by 3DSPRITEDEF
   # massive - the whole bsp nodes and everything.
