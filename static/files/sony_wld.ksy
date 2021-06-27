@@ -89,53 +89,6 @@ types:
       - id: blue
         type: f4
 
-  sprite_pitch:
-    params:
-      - id: num_frames
-        type: u4
-    seq:
-      - id: pitch_cap
-        type: s4
-      - id: num_headings
-        type: u4
-      - id: headings
-        type: sprite_heading(num_frames)
-        repeat: expr
-        repeat-expr: num_headings
-
-  sprite_heading:
-    params:
-      - id: num_frames
-        type: u4
-    seq:
-      - id: heading_cap
-        type: s4
-      - id: frames
-        type: u4
-        repeat: expr
-        repeat-expr: num_frames
-
-  uv_info:
-    seq:
-      - id: uv_origin_x
-        type: f4
-      - id: uv_origin_y
-        type: f4
-      - id: uv_origin_z
-        type: f4
-      - id: u_axis_x
-        type: f4
-      - id: u_axis_y
-        type: f4
-      - id: u_axis_z
-        type: f4
-      - id: v_axis_x
-        type: f4
-      - id: v_axis_y
-        type: f4
-      - id: v_axis_z
-        type: f4
-
   frame_transform:
     seq:
       - id: rotate_denominator
@@ -328,36 +281,46 @@ types:
           VAXIS 1.0 0.25 0.35 0.45
         ENDRENDERINFO
       END2DSPRITEDEF
+    meta:
+      bit-endian: le
     seq:
       - id: name_reference
         type: s4
         doc: The name of this sprite
       - id: flags
-        type: s4
+        type: sprite_flags
       - id: num_frames
-        type: s4
+        type: u4
       - id: num_pitches
         type: s4
       - id: sprite_size_x
         type: f4
       - id: sprite_size_y
         type: f4
-      - id: fragment
+      - id: sphere_fragment
         type: s4
+        doc: |
+          When SPHERE is defined this references a 0x22 fragment
+      - id: depth_scale
+        type: f4
+        if: flags.has_depth_scale
       - id: center_offset_x
         type: f4
-        if: (flags & 0b1) == 1
+        if: flags.has_center_offset
       - id: center_offset_y
         type: f4
-        if: (flags & 0b1) == 1
-      - id: center_offset_z
+        if: flags.has_center_offset
         type: f4
-        if: (flags & 0b1) == 1
-      - id: unkn_params4
+        if: flags.has_center_offset
+      - id: bounding_radius
         type: f4
+        if: flags.has_bounding_radius
+      - id: current_frame
+        type: u4
+        if: flags.has_current_frame
       - id: sleep
         type: s4
-        if: (flags & 0b1000) >> 3 == 1
+        if: flags.has_sleep
       - id: pitches
         type: sprite_pitch(num_frames)
         repeat: expr
@@ -365,19 +328,198 @@ types:
       - id: render_method
         type: s4
       - id: renderinfo_flags
-        type: s4
+        type: render_flags
       - id: pen
         type: s4
-        if: (renderinfo_flags & 0b1) == 1
+        if: renderinfo_flags.has_pen
       - id: brightness
         type: f4
-        if: (renderinfo_flags & 0b10) >> 1 == 1
+        if: renderinfo_flags.has_brightness
       - id: scaled_ambient
         type: f4
-        if: (renderinfo_flags & 0b100) >> 2 == 1
+        if: renderinfo_flags.has_scaled_ambient
       - id: uv_info
         type: uv_info
-        if: (renderinfo_flags & 0b10000) >> 4 == 1
+        if: renderinfo_flags.has_uv_info
+    types:
+      sprite_flags:
+        seq:
+          - id: has_center_offset
+            type: b1
+          - id: has_bounding_radius
+            type: b1
+          - id: has_current_frame
+            type: b1
+          - id: has_sleep
+            type: b1
+          - id: flag04
+            type: b1
+          - id: flag05
+            type: b1
+          - id: skip_frames
+            type: b1
+          - id: has_depth_scale
+            type: b1
+          - id: flag08
+            type: b1
+          - id: flag09
+            type: b1
+          - id: flag10
+            type: b1
+          - id: flag11
+            type: b1
+          - id: flag12
+            type: b1
+          - id: flag13
+            type: b1
+          - id: flag14
+            type: b1
+          - id: flag15
+            type: b1
+          - id: flag16
+            type: b1
+          - id: flag17
+            type: b1
+          - id: flag18
+            type: b1
+          - id: flag19
+            type: b1
+          - id: flag20
+            type: b1
+          - id: flag21
+            type: b1
+          - id: flag22
+            type: b1
+          - id: flag23
+            type: b1
+          - id: flag24
+            type: b1
+          - id: flag25
+            type: b1
+          - id: flag26
+            type: b1
+          - id: flag27
+            type: b1
+          - id: flag28
+            type: b1
+          - id: flag29
+            type: b1
+          - id: flag30
+            type: b1
+          - id: flag31
+            type: b1
+      sprite_pitch:
+        params:
+          - id: num_frames
+            type: u4
+        seq:
+          - id: pitch_cap
+            type: s4
+          - id: num_headings
+            type: b31
+          - id: top_or_bottom_view
+            type: b1
+          - id: headings
+            type: sprite_heading(num_frames)
+            repeat: expr
+            repeat-expr: num_headings
+      sprite_heading:
+        params:
+          - id: num_frames
+            type: u4
+        seq:
+          - id: heading_cap
+            type: s4
+          - id: frames
+            type: u4
+            repeat: expr
+            repeat-expr: num_frames
+      render_flags:
+        seq:
+          - id: has_pen
+            type: b1
+          - id: has_brightness
+            type: b1
+          - id: has_scaled_ambient
+            type: b1
+          - id: flag03
+            type: b1
+          - id: has_uv_info
+            type: b1
+          - id: flag05
+            type: b1
+          - id: flag06
+            type: b1
+          - id: flag07
+            type: b1
+          - id: flag08
+            type: b1
+          - id: flag09
+            type: b1
+          - id: flag10
+            type: b1
+          - id: flag11
+            type: b1
+          - id: flag12
+            type: b1
+          - id: flag13
+            type: b1
+          - id: flag14
+            type: b1
+          - id: flag15
+            type: b1
+          - id: flag16
+            type: b1
+          - id: flag17
+            type: b1
+          - id: flag18
+            type: b1
+          - id: flag19
+            type: b1
+          - id: flag20
+            type: b1
+          - id: flag21
+            type: b1
+          - id: flag22
+            type: b1
+          - id: flag23
+            type: b1
+          - id: flag24
+            type: b1
+          - id: flag25
+            type: b1
+          - id: flag26
+            type: b1
+          - id: flag27
+            type: b1
+          - id: flag28
+            type: b1
+          - id: flag29
+            type: b1
+          - id: flag30
+            type: b1
+          - id: flag31
+            type: b1
+      uv_info:
+        seq:
+          - id: uv_origin_x
+            type: f4
+          - id: uv_origin_y
+            type: f4
+          - id: uv_origin_z
+            type: f4
+          - id: u_axis_x
+            type: f4
+          - id: u_axis_y
+            type: f4
+          - id: u_axis_z
+            type: f4
+          - id: v_axis_x
+            type: f4
+          - id: v_axis_y
+            type: f4
+          - id: v_axis_z
+            type: f4
     instances:
       name:
         type: string_hash_reference(name_reference)
