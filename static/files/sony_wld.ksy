@@ -286,21 +286,31 @@ types:
     seq:
       - id: name_reference
         type: s4
-        doc: The name of this sprite
+        doc: |
+          The name of this sprite
       - id: flags
         type: sprite_flags
       - id: num_frames
+        doc: |
+          The number of frames present in each heading
         type: u4
       - id: num_pitches
         type: s4
+        doc: |
+          The number of pitches
       - id: sprite_size_x
         type: f4
+        doc: |
+          Scale the sprite by this amount in the x direction?
       - id: sprite_size_y
         type: f4
+        doc: |
+          Scale the sprite by this amount in the y direction?
       - id: sphere_fragment
         type: s4
         doc: |
-          When SPHERE is defined this references a 0x22 fragment
+          When SPHERE or SPHERELIST is defined this references a 0x22 fragment.
+          When POLYHEDRON is defined this references a 0x18 fragment.
       - id: depth_scale
         type: f4
         if: flags.has_depth_scale
@@ -326,7 +336,7 @@ types:
         repeat: expr
         repeat-expr: num_pitches
       - id: render_method
-        type: s4
+        type: render_method
       - id: renderinfo_flags
         type: render_flags
       - id: pen
@@ -434,6 +444,103 @@ types:
             type: u4
             repeat: expr
             repeat-expr: num_frames
+      render_method:
+        doc: |
+          SOLIDFILL                    = 0x007 = 0b_0000_0000_0111
+          SOLIDFILLAMBIENT             = 0x013 = 0b_0000_0001_0011
+          SOLIDFILLCONSTANT            = 0x00b = 0b_0000_0000_1011
+          SOLIDFILLSCALEDAMBIENT       = 0x017 = 0b_0000_0001_0111
+          SOLIDFILLZEROINTENSITY       = 0x003 = 0b_0000_0000_0011
+
+          TEXTURE1                     = 0x107 = 0b_0001_0000_0111
+          TEXTURE2                     = 0x207 = 0b_0010_0000_0111
+          TEXTURE3                     = 0x307 = 0b_0011_0000_0111
+          TEXTURE4                     = 0x407 = 0b_0100_0000_0111
+          TEXTURE5                     = 0x507 = 0b_0101_0000_0111
+
+          TEXTURE1AMBIENT              = 0x113 = 0b_0001_0001_0011
+          TEXTURE2AMBIENT              = 0x213 = 0b_0010_0001_0011
+          TEXTURE3AMBIENT              = 0x313 = 0b_0011_0001_0011
+          TEXTURE4AMBIENT              = 0x413 = 0b_0100_0001_0011
+          TEXTURE5AMBIENT              = 0x513 = 0b_0101_0000_0011
+
+          TEXTURE1CONSTANT             = 0x10b = 0b_0001_0000_1011
+          TEXTURE2CONSTANT             = 0x20b = 0b_0010_0000_1011
+          TEXTURE3CONSTANT             = 0x30b = 0b_0011_0000_1011
+          TEXTURE4CONSTANT             = 0x40b = 0b_0100_0000_1011
+          TEXTURE5CONSTANT             = 0x50b = 0b_0101_0000_1011
+
+          TEXTURE1SCALEDAMBIENT        = 0x117 = 0b_0001_0001_0111
+          TEXTURE2SCALEDAMBIENT        = 0x213 = 0b_0010_0001_0111
+          TEXTURE3SCALEDAMBIENT        = 0x313 = 0b_0011_0001_0111
+          TEXTURE4SCALEDAMBIENT        = 0x413 = 0b_0100_0001_0111
+          TEXTURE5SCALEDAMBIENT        = 0x513 = 0b_0101_0000_0111
+
+          TEXTURE1ZEROINTENSITY        = 0x003 = 0b_0000_0000_0011
+          TEXTURE2ZEROINTENSITY        = 0x003 = 0b_0000_0000_0011
+          TEXTURE3ZEROINTENSITY        = 0x003 = 0b_0000_0000_0011
+          TEXTURE4ZEROINTENSITY        = 0x003 = 0b_0000_0000_0011
+          TEXTURE5ZEROINTENSITY        = 0x003 = 0b_0000_0000_0011
+
+          TRANSTEXTURE1                = 0x187 = 0b_0001_1000_0111
+          TRANSTEXTURE2                = 0x287 = 0b_0010_1000_0111
+          TRANSTEXTURE4                = 0x487 = 0b_0100_1000_0111
+          TRANSTEXTURE5                = 0x587 = 0b_0101_1000_0111
+
+          TRANSTEXTURE1AMBIENT         = 0x193 = 0b_0001_1001_0011
+          TRANSTEXTURE2AMBIENT         = 0x293 = 0b_0010_1001_0011
+          TRANSTEXTURE4AMBIENT         = 0x493 = 0b_0100_1001_0011
+          TRANSTEXTURE5AMBIENT         = 0x593 = 0b_0101_1001_0011
+
+          TRANSTEXTURE1CONSTANT        = 0x18b = 0b_0001_1000_1011
+          TRANSTEXTURE2CONSTANT        = 0x18b = 0b_0010_1000_1011
+          TRANSTEXTURE4CONSTANT        = 0x18b = 0b_0100_1000_1011
+          TRANSTEXTURE5CONSTANT        = 0x18b = 0b_0101_1000_1011
+
+          TRANSTEXTURE1SCALEDAMBIENT   = 0x197 = 0b_0001_1001_0111
+          TRANSTEXTURE2SCALEDAMBIENT   = 0x297 = 0b_0010_1001_0111
+          TRANSTEXTURE4SCALEDAMBIENT   = 0x497 = 0b_0100_1001_0111
+          TRANSTEXTURE5SCALEDAMBIENT   = 0x597 = 0b_0101_1001_0111
+
+          TRANSTEXTURE1ZEROINTENSITY   = 0x183 = 0b_0001_1000_0011
+          TRANSTEXTURE2ZEROINTENSITY   = 0x283 = 0b_0010_1000_0011
+          TRANSTEXTURE4ZEROINTENSITY   = 0x483 = 0b_0100_1000_0011
+          TRANSTEXTURE5ZEROINTENSITY   = 0x583 = 0b_0101_1000_0011
+
+          USERDEFINED %d               =  %d
+        seq:
+          - id: flag00
+            type: b1
+            doc: |
+              Always set for known values
+          - id: flag01
+            type: b1
+            doc: |
+              Always set for known values
+          - id: flag02
+            type: b1
+          - id: constant
+            type: b1
+            doc: |
+              Render with constant color value?
+          - id: ambient
+            type: b1
+            doc: |
+              Render with ambient lighting?
+          - id: flag05
+            type: b1
+          - id: flag06
+            type: b1
+          - id: transparent
+            type: b1
+            doc: |
+              Enable texture transparency?
+          - id: num_tex_coords
+            type: b3
+            doc: |
+              The number of texture coordinates
+          - id: ukn
+            type: b21
       render_flags:
         seq:
           - id: has_pen
