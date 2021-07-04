@@ -1,5 +1,6 @@
 meta:
   id: sony_wld
+  title: Sony WLD File Format
   file-extension: wld
   endian: le
 
@@ -7,54 +8,39 @@ meta:
 #  (flags & 0b10) >> 1 == 1 could be (flags & 0b10) != 0
 #  look into kaitai's bitfield docs
 
+doc: |
+  Sony WLD Doc.
 seq:
   - id: header
     type: header
+    doc: WLD file header
   - id: string_hash
     type: xor_string(header.string_hash_bytes, header.string_count)
-
   - id: objects
-    type: wld_object
+    type: object
     repeat: expr
     repeat-expr: header.object_count
-
   - id: footer
     contents: [0xff, 0xff, 0xff, 0xff]
 
 types:
   header:
     seq:
-    - id: magic
-      contents: [0x02, 0x3d, 0x50, 0x54]
-    - id: version
-      type: u4
-    - id: object_count
-      type: u4
-    - id: region_count
-      type: u4
-    - id: max_object_bytes
-      type: u4
-    - id: string_hash_bytes
-      type: u4
-    - id: string_count
-      type: u4
+      - id: magic
+        contents: [0x02, 0x3d, 0x50, 0x54]
+      - id: version
+        type: u4
+      - id: object_count
+        type: u4
+      - id: region_count
+        type: u4
+      - id: max_object_bytes
+        type: u4
+      - id: string_hash_bytes
+        type: u4
+      - id: string_count
+        type: u4
 
-  decoded_string_raw:
-    params:
-      - id: repeats
-        type: u2
-    seq:
-      - id: strings
-        type: strz
-        encoding: ASCII
-        repeat: expr
-        repeat-expr: repeats + 1
-    instances:
-      raw:
-        pos: 0
-        type: str
-        encoding: ASCII
-        size-eos: true
 
   xor_string:
     params:
@@ -68,8 +54,26 @@ types:
         # wasn't able to get the key stored as a value instance
         process: xor([0x95, 0x3A, 0xC5, 0x2A, 0x95, 0x7A, 0x95, 0x6A])
         type: decoded_string_raw(count)
+    types:
+      decoded_string_raw:
+        params:
+          - id: repeats
+            type: u2
+        seq:
+          - id: strings
+            type: strz
+            encoding: ASCII
+            repeat: expr
+            repeat-expr: repeats + 1
+        instances:
+          raw:
+            pos: 0
+            type: str
+            encoding: ASCII
+            size-eos: true
 
   string_hash_reference:
+    doc: Decode and return the string at `position` in the `string_hash`
     params:
       - id: position
         type: u2
@@ -80,63 +84,8 @@ types:
         type: strz
         encoding: ASCII
 
-  color_rgb:
-    seq:
-      - id: red
-        type: f4
-      - id: green
-        type: f4
-      - id: blue
-        type: f4
 
-  frame_transform:
-    seq:
-      - id: rotate_denominator
-        type: f4
-      - id: rotate_x_numerator
-        type: f4
-      - id: rotate_y_numerator
-        type: f4
-      - id: rotate_z_numerator
-        type: f4
-      - id: shift_x_numerator
-        type: f4
-      - id: shift_y_numerator
-        type: f4
-      - id: shift_z_numerator
-        type: f4
-      - id: shift_denominator
-        type: f4
-
-  # WORLDNODE
-  world_node:
-    seq:
-      # NORMALABCD %f %f %f %f
-      - id: normal_a
-        type: f4
-      - id: normal_b
-        type: f4
-      - id: normal_c
-        type: f4
-      - id: normal_d
-        type: f4
-
-      # WORLDREGIONTAG %d
-      - id: region_tag
-        type: u4
-      # TODO: revisit with more examples and add conditions when region isn't zero
-
-      # FRONTTREE %d
-      - id: front_tree
-        type: u4
-        if: region_tag == 0
-
-      # BACKTREE %d
-      - id: back_tree
-        type: u4
-        if: region_tag == 0
-
-  wld_object:
+  object:
     seq:
       - id: length
         type: u4
@@ -183,6 +132,7 @@ types:
   # SIMPLESPRITEDEF
   object_type_04:
     doc: |
+      ```
       SIMPLESPRITEDEF
         SIMPLESPRITETAG %s
         NUMFRAMES %d
@@ -192,6 +142,7 @@ types:
         SLEEP %d
         SKIPFRAMES ON
       ENDSIMPLESPRITEDEF
+      ```
     seq:
       - id: name_reference
         type: s4
@@ -238,6 +189,8 @@ types:
   # 2DSPRITEDEF
   object_type_06:
     doc: |
+      #### Example
+      ```
       2DSPRITEDEF
         2DSPRITETAG I_SWORDSPRITE
         CENTEROFFSET 0.0 1.0 0.0
@@ -281,6 +234,7 @@ types:
           VAXIS 1.0 0.25 0.35 0.45
         ENDRENDERINFO
       END2DSPRITEDEF
+      ```
     meta:
       bit-endian: le
     seq:
@@ -318,8 +272,6 @@ types:
         type: f4
         if: flags.has_center_offset
       - id: center_offset_y
-        type: f4
-        if: flags.has_center_offset
         type: f4
         if: flags.has_center_offset
       - id: bounding_radius
@@ -446,6 +398,7 @@ types:
             repeat-expr: num_frames
       render_method:
         doc: |
+          ```
           SOLIDFILL                    = 0x007 = 0b_0000_0000_0111
           SOLIDFILLAMBIENT             = 0x013 = 0b_0000_0001_0011
           SOLIDFILLCONSTANT            = 0x00b = 0b_0000_0000_1011
@@ -508,6 +461,7 @@ types:
           TRANSTEXTURE5ZEROINTENSITY   = 0x583 = 0b_0101_1000_0011
 
           USERDEFINED %d               =  %d
+          ```
         seq:
           - id: flag00
             type: b1
@@ -654,7 +608,26 @@ types:
         type: frame_transform
         repeat: expr
         repeat-expr: frame_count
-      # TODO: handle fields added by flags
+        # TODO: handle fields added by flags
+    types:
+      frame_transform:
+        seq:
+          - id: rotate_denominator
+            type: f4
+          - id: rotate_x_numerator
+            type: f4
+          - id: rotate_y_numerator
+            type: f4
+          - id: rotate_z_numerator
+            type: f4
+          - id: shift_x_numerator
+            type: f4
+          - id: shift_y_numerator
+            type: f4
+          - id: shift_z_numerator
+            type: f4
+          - id: shift_denominator
+            type: f4
 
     instances:
       name:
@@ -736,6 +709,16 @@ types:
         repeat-expr: frame_count
         if: (flags & 0b1010) != 0 and frame_count != 0
 
+    types:
+      color_rgb:
+        seq:
+          - id: red
+            type: f4
+          - id: green
+            type: f4
+          - id: blue
+            type: f4
+
     instances:
       name:
         type: string_hash_reference(name_reference)
@@ -774,6 +757,33 @@ types:
         type: world_node
         repeat: expr
         repeat-expr: world_node_count
+    types:
+      world_node:
+        seq:
+          # NORMALABCD %f %f %f %f
+          - id: normal_a
+            type: f4
+          - id: normal_b
+            type: f4
+          - id: normal_c
+            type: f4
+          - id: normal_d
+            type: f4
+
+          # WORLDREGIONTAG %d
+          - id: region_tag
+            type: u4
+          # TODO: revisit with more examples and add conditions when region isn't zero
+
+          # FRONTTREE %d
+          - id: front_tree
+            type: u4
+            if: region_tag == 0
+
+          # BACKTREE %d
+          - id: back_tree
+            type: u4
+            if: region_tag == 0
 
   # POINTLIGHT
   object_type_28:
@@ -827,4 +837,3 @@ types:
         value: (flags & 0b1000000) != 0
 
   # # object_type_unknown:
-
