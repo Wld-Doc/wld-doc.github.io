@@ -1,6 +1,6 @@
 meta:
   id: sony_wld
-  title: Sony WLD File Format
+  title: Binary Sony WLD
   file-extension: wld
   endian: le
 
@@ -17,12 +17,11 @@ seq:
   - id: string_hash
     type: xor_string(header.string_hash_bytes, header.string_count)
   - id: objects
-    type: object
+    type: wld_object
     repeat: expr
     repeat-expr: header.object_count
   - id: footer
     contents: [0xff, 0xff, 0xff, 0xff]
-
 types:
   header:
     seq:
@@ -40,7 +39,6 @@ types:
         type: u4
       - id: string_count
         type: u4
-
 
   xor_string:
     params:
@@ -85,7 +83,7 @@ types:
         encoding: ASCII
 
 
-  object:
+  wld_object:
     seq:
       - id: length
         type: u4
@@ -103,7 +101,9 @@ types:
             0x8: object_type_08
             0x12: object_type_12 # TRACKDEFINITION
             0x13: object_type_13 # TRACKINSTANCE
-            0x1a: object_type_1a
+            0x16: object_type_16 # SPHERE
+            0x18: object_type_18 # POLYHEDRON
+            0x1a: object_type_1a # SPHERELIST
             0x1b: object_type_1b
             0x1c: object_type_1c # part of pointlight
             0x21: object_type_21 # WORLDTREE
@@ -263,8 +263,8 @@ types:
       - id: sphere_fragment
         type: s4
         doc: |
-          When SPHERE or SPHERELIST is defined this references a 0x22 fragment.
-          When POLYHEDRON is defined this references a 0x18 fragment.
+          When SPHERE or SPHERELIST is defined this references a 0x16 fragment.
+          When POLYHEDRON is defined this references a 0x16 fragment.
       - id: depth_scale
         type: f4
         if: flags.has_depth_scale
@@ -288,7 +288,8 @@ types:
         repeat: expr
         repeat-expr: num_pitches
       - id: render_method
-        type: render_method
+        type: u4
+        enum: render_method
       - id: renderinfo_flags
         type: render_flags
       - id: pen
@@ -303,6 +304,56 @@ types:
       - id: uv_info
         type: uv_info
         if: renderinfo_flags.has_uv_info
+    enums:
+      render_method:
+        0x000: transparent
+        0x003: solidfillzerointensity # also TEXTURE*ZEROINTENSITY
+        0x006: wireframe
+        0x007: solidfill
+        0x00b: solidfillconstant
+        0x013: solidfillambient
+        0x017: solidfillscaledambient
+        0x107: texture1
+        0x207: texture2
+        0x307: texture3
+        0x407: texture4
+        0x507: texture5
+        0x113: texture1ambient
+        0x213: texture2ambient
+        0x313: texture3ambient
+        0x413: texture4ambient
+        0x513: texture5ambient
+        0x10b: texture1constant
+        0x20b: texture2constant
+        0x30b: texture3constant
+        0x40b: texture4constant
+        0x50b: texture5constant
+        0x117: texture1scaledambient
+        0x217: texture2scaledambient
+        0x317: texture3scaledambient
+        0x417: texture4scaledambient
+        0x517: texture5scaledambient
+        0x187: transtexture1
+        0x287: transtexture2
+        0x487: transtexture4
+        0x587: transtexture5
+        0x193: transtexture1ambient
+        0x293: transtexture2ambient
+        0x493: transtexture4ambient
+        0x593: transtexture5ambient
+        0x18b: transtexture1constant
+        0x28b: transtexture2constant
+        0x48b: transtexture4constant
+        0x58b: transtexture5constant
+        0x197: transtexture1scaledambient
+        0x297: transtexture2scaledambient
+        0x497: transtexture4scaledambient
+        0x597: transtexture5scaledambient
+        0x183: transtexture1zerointensity
+        0x283: transtexture2zerointensity
+        0x483: transtexture4zerointensity
+        0x583: transtexture5zerointensity
+
     types:
       sprite_flags:
         seq:
@@ -396,105 +447,6 @@ types:
             type: u4
             repeat: expr
             repeat-expr: num_frames
-      render_method:
-        doc: |
-          ```
-          SOLIDFILL                    = 0x007 = 0b_0000_0000_0111
-          SOLIDFILLAMBIENT             = 0x013 = 0b_0000_0001_0011
-          SOLIDFILLCONSTANT            = 0x00b = 0b_0000_0000_1011
-          SOLIDFILLSCALEDAMBIENT       = 0x017 = 0b_0000_0001_0111
-          SOLIDFILLZEROINTENSITY       = 0x003 = 0b_0000_0000_0011
-
-          TEXTURE1                     = 0x107 = 0b_0001_0000_0111
-          TEXTURE2                     = 0x207 = 0b_0010_0000_0111
-          TEXTURE3                     = 0x307 = 0b_0011_0000_0111
-          TEXTURE4                     = 0x407 = 0b_0100_0000_0111
-          TEXTURE5                     = 0x507 = 0b_0101_0000_0111
-
-          TEXTURE1AMBIENT              = 0x113 = 0b_0001_0001_0011
-          TEXTURE2AMBIENT              = 0x213 = 0b_0010_0001_0011
-          TEXTURE3AMBIENT              = 0x313 = 0b_0011_0001_0011
-          TEXTURE4AMBIENT              = 0x413 = 0b_0100_0001_0011
-          TEXTURE5AMBIENT              = 0x513 = 0b_0101_0000_0011
-
-          TEXTURE1CONSTANT             = 0x10b = 0b_0001_0000_1011
-          TEXTURE2CONSTANT             = 0x20b = 0b_0010_0000_1011
-          TEXTURE3CONSTANT             = 0x30b = 0b_0011_0000_1011
-          TEXTURE4CONSTANT             = 0x40b = 0b_0100_0000_1011
-          TEXTURE5CONSTANT             = 0x50b = 0b_0101_0000_1011
-
-          TEXTURE1SCALEDAMBIENT        = 0x117 = 0b_0001_0001_0111
-          TEXTURE2SCALEDAMBIENT        = 0x213 = 0b_0010_0001_0111
-          TEXTURE3SCALEDAMBIENT        = 0x313 = 0b_0011_0001_0111
-          TEXTURE4SCALEDAMBIENT        = 0x413 = 0b_0100_0001_0111
-          TEXTURE5SCALEDAMBIENT        = 0x513 = 0b_0101_0000_0111
-
-          TEXTURE1ZEROINTENSITY        = 0x003 = 0b_0000_0000_0011
-          TEXTURE2ZEROINTENSITY        = 0x003 = 0b_0000_0000_0011
-          TEXTURE3ZEROINTENSITY        = 0x003 = 0b_0000_0000_0011
-          TEXTURE4ZEROINTENSITY        = 0x003 = 0b_0000_0000_0011
-          TEXTURE5ZEROINTENSITY        = 0x003 = 0b_0000_0000_0011
-
-          TRANSTEXTURE1                = 0x187 = 0b_0001_1000_0111
-          TRANSTEXTURE2                = 0x287 = 0b_0010_1000_0111
-          TRANSTEXTURE4                = 0x487 = 0b_0100_1000_0111
-          TRANSTEXTURE5                = 0x587 = 0b_0101_1000_0111
-
-          TRANSTEXTURE1AMBIENT         = 0x193 = 0b_0001_1001_0011
-          TRANSTEXTURE2AMBIENT         = 0x293 = 0b_0010_1001_0011
-          TRANSTEXTURE4AMBIENT         = 0x493 = 0b_0100_1001_0011
-          TRANSTEXTURE5AMBIENT         = 0x593 = 0b_0101_1001_0011
-
-          TRANSTEXTURE1CONSTANT        = 0x18b = 0b_0001_1000_1011
-          TRANSTEXTURE2CONSTANT        = 0x18b = 0b_0010_1000_1011
-          TRANSTEXTURE4CONSTANT        = 0x18b = 0b_0100_1000_1011
-          TRANSTEXTURE5CONSTANT        = 0x18b = 0b_0101_1000_1011
-
-          TRANSTEXTURE1SCALEDAMBIENT   = 0x197 = 0b_0001_1001_0111
-          TRANSTEXTURE2SCALEDAMBIENT   = 0x297 = 0b_0010_1001_0111
-          TRANSTEXTURE4SCALEDAMBIENT   = 0x497 = 0b_0100_1001_0111
-          TRANSTEXTURE5SCALEDAMBIENT   = 0x597 = 0b_0101_1001_0111
-
-          TRANSTEXTURE1ZEROINTENSITY   = 0x183 = 0b_0001_1000_0011
-          TRANSTEXTURE2ZEROINTENSITY   = 0x283 = 0b_0010_1000_0011
-          TRANSTEXTURE4ZEROINTENSITY   = 0x483 = 0b_0100_1000_0011
-          TRANSTEXTURE5ZEROINTENSITY   = 0x583 = 0b_0101_1000_0011
-
-          USERDEFINED %d               =  %d
-          ```
-        seq:
-          - id: flag00
-            type: b1
-            doc: |
-              Always set for known values
-          - id: flag01
-            type: b1
-            doc: |
-              Always set for known values
-          - id: flag02
-            type: b1
-          - id: constant
-            type: b1
-            doc: |
-              Render with constant color value?
-          - id: ambient
-            type: b1
-            doc: |
-              Render with ambient lighting?
-          - id: flag05
-            type: b1
-          - id: flag06
-            type: b1
-          - id: transparent
-            type: b1
-            doc: |
-              Enable texture transparency?
-          - id: num_tex_coords
-            type: b3
-            doc: |
-              The number of texture coordinates
-          - id: ukn
-            type: b21
       render_flags:
         seq:
           - id: has_pen
@@ -661,19 +613,70 @@ types:
       reverse:
         value: (flags & 0b10) >> 1 == 1
 
-  # Added by 3DSPRITEDEF
+  # SPHERE
+  object_type_16:
+    seq:
+      - id: name_reference
+        type: s4
+      - id: radius
+        type: f4
+
+  # POLYHEDRON
+  object_type_18:
+    seq:
+      - id: tag_reference
+        type: s4
+      - id: definition_reference
+        type: s4
+      - id: polyhedron_flags
+        type: polyhedron_flags
+      - id: scale_factor
+        type: f4
+        if: polyhedron_flags.has_scale_factor
+    meta:
+      bit-endian: le
+    types:
+      polyhedron_flags:
+        seq:
+          - id: has_scale_factor
+            type: b1
+          - id: ukn
+            type: b31
+    instances:
+      tag:
+        type: string_hash_reference(tag_reference)
+      definition:
+        type: string_hash_reference(definition_reference)
+
+  # SPHERELIST
   # No idea what this one is trying to do, will need to see if changing the file changes this object.
   # maybe this is the spherelist def?
   # could check mapedit for an example spherelist with more data
   object_type_1a:
     seq:
-      - id: unk1
-        type: u4
-      # might be a name_ref
-      - id: unk2
+      - id: tag_reference
         type: s4
-      - id: unk3
-        type: u4
+      - id: definition_reference
+        type: s4
+      - id: sphere_list_flags
+        type: sphere_list_flags
+      - id: scale_factor
+        type: f4
+        if: sphere_list_flags.has_scale_factor
+    meta:
+      bit-endian: le
+    types:
+      sphere_list_flags:
+        seq:
+          - id: has_scale_factor
+            type: b1
+          - id: ukn
+            type: b31
+    instances:
+      tag:
+        type: string_hash_reference(tag_reference)
+      definition:
+        type: string_hash_reference(definition_reference)
 
   # LIGHTDEFINITION
   # unable to test CURRENTFRAME or multiple frames/colors.
