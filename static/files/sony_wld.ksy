@@ -288,8 +288,7 @@ types:
         repeat: expr
         repeat-expr: num_pitches
       - id: render_method
-        type: u4
-        enum: render_method
+        type: render_method_attrs
       - id: renderinfo_flags
         type: render_flags
       - id: pen
@@ -304,57 +303,63 @@ types:
       - id: uv_info
         type: uv_info
         if: renderinfo_flags.has_uv_info
-    enums:
-      render_method:
-        0x000: transparent
-        0x003: solidfillzerointensity # also TEXTURE*ZEROINTENSITY
-        0x006: wireframe
-        0x007: solidfill
-        0x00b: solidfillconstant
-        0x013: solidfillambient
-        0x017: solidfillscaledambient
-        0x107: texture1
-        0x207: texture2
-        0x307: texture3
-        0x407: texture4
-        0x507: texture5
-        0x113: texture1ambient
-        0x213: texture2ambient
-        0x313: texture3ambient
-        0x413: texture4ambient
-        0x513: texture5ambient
-        0x10b: texture1constant
-        0x20b: texture2constant
-        0x30b: texture3constant
-        0x40b: texture4constant
-        0x50b: texture5constant
-        0x117: texture1scaledambient
-        0x217: texture2scaledambient
-        0x317: texture3scaledambient
-        0x417: texture4scaledambient
-        0x517: texture5scaledambient
-        0x187: transtexture1
-        0x287: transtexture2
-        0x487: transtexture4
-        0x587: transtexture5
-        0x193: transtexture1ambient
-        0x293: transtexture2ambient
-        0x493: transtexture4ambient
-        0x593: transtexture5ambient
-        0x18b: transtexture1constant
-        0x28b: transtexture2constant
-        0x48b: transtexture4constant
-        0x58b: transtexture5constant
-        0x197: transtexture1scaledambient
-        0x297: transtexture2scaledambient
-        0x497: transtexture4scaledambient
-        0x597: transtexture5scaledambient
-        0x183: transtexture1zerointensity
-        0x283: transtexture2zerointensity
-        0x483: transtexture4zerointensity
-        0x583: transtexture5zerointensity
-
     types:
+      render_method_attrs:
+        seq:
+          - id: draw_style
+            type: b2
+            enum: draw_style
+          - id: lighting
+            type: b3
+            enum: lighting
+          - id: shading
+            type: b2
+            enum: shading
+          - id: texture_style
+            type: b4
+            enum: texture_style
+          - id: unused1
+            doc: These bits cause WLDCOM.EXE to crash when decompiling if set
+            type: b5
+          - id: unused2
+            type: b15
+          - id: user_defined
+            type: b1
+        enums:
+          draw_style:
+            0b00: transparent
+            0b01: unknown
+            0b10: wireframe
+            0b11: solid
+          lighting:
+            0b000: zero_intensity
+            0b001: unknown1
+            0b010: constant
+            0b011: xxxxx
+            0b100: ambient
+            0b101: scaled_ambient
+            0b111: invalid
+          shading:
+            0b00: none1
+            0b01: none2
+            0b10: gouraud1
+            0b11: gouraud2
+          texture_style:
+            0b0001: xxxxxxxx
+            0b0010: texture1
+            0b0011: transtexture1
+            0b0100: texture2
+            0b0101: transtexture2
+            0b0110: texture3
+            0b0111: xxxxxxxx
+            0b1000: texture4
+            0b1001: transtexture4
+            0b1010: texture5
+            0b1011: transtexture5
+            0b1100: unknown1
+            0b1101: unknown2
+            0b1110: unknown3
+            0b1111: xxxxx
       sprite_flags:
         seq:
           - id: has_center_offset
