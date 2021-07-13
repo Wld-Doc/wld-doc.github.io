@@ -167,17 +167,23 @@ types:
     seq:
       - id: name_reference
         type: s4
-      - id: size1
+      - id: filename_count
         type: u4
-      - id: filenames_length
-        type: u2
       - id: filenames
-        type: xor_string(filenames_length, size1)
+        type: filename
+        repeat: expr
+        repeat-expr: filename_count
     instances:
       name:
         type: string_hash_reference(name_reference)
+    types:
       filename:
-        value: filenames.decoded.strings.first
+        seq:
+          - id: length
+            type: u2
+          - id: name
+            size: length
+            type: xor_string(length, 0)
 
   # SIMPLESPRITEDEF
   object_type_04:
