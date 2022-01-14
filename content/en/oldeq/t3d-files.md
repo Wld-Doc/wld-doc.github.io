@@ -174,7 +174,7 @@ Extracts `EQUEST.T3D` and `EQUIP.T3D` with [client side JS](/kaitai/js-parsers#f
 ### WLD/SPH files
 
 Mixed in with the `.bmp` files are `.sph` and `.wld` files in an uncompressed ascii format that is (mostly) compaitible with [Tanarus'](/tanarus/background) compressor tool.
-See [WLDCOM.EXE](../wldcom/overview) for more info.
+See [WLDCOM.EXE](/files/wldcom) for more info.
 
 <code-group>
   <code-block label="compress" active>
