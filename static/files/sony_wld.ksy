@@ -1,5 +1,6 @@
 meta:
   id: sony_wld
+  title: Binary Sony WLD
   file-extension: wld
   endian: le
 
@@ -7,54 +8,37 @@ meta:
 #  (flags & 0b10) >> 1 == 1 could be (flags & 0b10) != 0
 #  look into kaitai's bitfield docs
 
+doc: |
+  Sony WLD Doc.
 seq:
   - id: header
     type: header
+    doc: WLD file header
   - id: string_hash
     type: xor_string(header.string_hash_bytes, header.string_count)
-
   - id: objects
     type: wld_object
     repeat: expr
     repeat-expr: header.object_count
-
   - id: footer
     contents: [0xff, 0xff, 0xff, 0xff]
-
 types:
   header:
     seq:
-    - id: magic
-      contents: [0x02, 0x3d, 0x50, 0x54]
-    - id: version
-      type: u4
-    - id: object_count
-      type: u4
-    - id: region_count
-      type: u4
-    - id: max_object_bytes
-      type: u4
-    - id: string_hash_bytes
-      type: u4
-    - id: string_count
-      type: u4
-
-  decoded_string_raw:
-    params:
-      - id: repeats
-        type: u2
-    seq:
-      - id: strings
-        type: strz
-        encoding: ASCII
-        repeat: expr
-        repeat-expr: repeats + 1
-    instances:
-      raw:
-        pos: 0
-        type: str
-        encoding: ASCII
-        size-eos: true
+      - id: magic
+        contents: [0x02, 0x3d, 0x50, 0x54]
+      - id: version
+        type: u4
+      - id: object_count
+        type: u4
+      - id: region_count
+        type: u4
+      - id: max_object_bytes
+        type: u4
+      - id: string_hash_bytes
+        type: u4
+      - id: string_count
+        type: u4
 
   xor_string:
     params:
@@ -68,8 +52,26 @@ types:
         # wasn't able to get the key stored as a value instance
         process: xor([0x95, 0x3A, 0xC5, 0x2A, 0x95, 0x7A, 0x95, 0x6A])
         type: decoded_string_raw(count)
+    types:
+      decoded_string_raw:
+        params:
+          - id: repeats
+            type: u2
+        seq:
+          - id: strings
+            type: strz
+            encoding: ASCII
+            repeat: expr
+            repeat-expr: repeats + 1
+        instances:
+          raw:
+            pos: 0
+            type: str
+            encoding: ASCII
+            size-eos: true
 
   string_hash_reference:
+    doc: Decode and return the string at `position` in the `string_hash`
     params:
       - id: position
         type: u2
@@ -80,61 +82,6 @@ types:
         type: strz
         encoding: ASCII
 
-  color_rgb:
-    seq:
-      - id: red
-        type: f4
-      - id: green
-        type: f4
-      - id: blue
-        type: f4
-
-  frame_transform:
-    seq:
-      - id: rotate_denominator
-        type: f4
-      - id: rotate_x_numerator
-        type: f4
-      - id: rotate_y_numerator
-        type: f4
-      - id: rotate_z_numerator
-        type: f4
-      - id: shift_x_numerator
-        type: f4
-      - id: shift_y_numerator
-        type: f4
-      - id: shift_z_numerator
-        type: f4
-      - id: shift_denominator
-        type: f4
-
-  # WORLDNODE
-  world_node:
-    seq:
-      # NORMALABCD %f %f %f %f
-      - id: normal_a
-        type: f4
-      - id: normal_b
-        type: f4
-      - id: normal_c
-        type: f4
-      - id: normal_d
-        type: f4
-
-      # WORLDREGIONTAG %d
-      - id: region_tag
-        type: u4
-      # TODO: revisit with more examples and add conditions when region isn't zero
-
-      # FRONTTREE %d
-      - id: front_tree
-        type: u4
-        if: region_tag == 0
-
-      # BACKTREE %d
-      - id: back_tree
-        type: u4
-        if: region_tag == 0
 
   wld_object:
     seq:
@@ -150,10 +97,13 @@ types:
             0x3: object_type_03 # FRAME and BMINFO
             0x4: object_type_04 # SIMPLESPRITEDEF
             # 0x5: object_type_05 # merchant 25 I think
+            0x6: object_type_06
             0x8: object_type_08
             0x12: object_type_12 # TRACKDEFINITION
             0x13: object_type_13 # TRACKINSTANCE
-            0x1a: object_type_1a
+            0x16: object_type_16 # SPHERE
+            0x18: object_type_18 # POLYHEDRON
+            0x1a: object_type_1a # SPHERELIST
             0x1b: object_type_1b
             0x1c: object_type_1c # part of pointlight
             0x21: object_type_21 # WORLDTREE
@@ -188,6 +138,7 @@ types:
   # SIMPLESPRITEDEF
   object_type_04:
     doc: |
+      ```
       SIMPLESPRITEDEF
         SIMPLESPRITETAG %s
         NUMFRAMES %d
@@ -197,6 +148,7 @@ types:
         SLEEP %d
         SKIPFRAMES ON
       ENDSIMPLESPRITEDEF
+      ```
     seq:
       - id: name_reference
         type: s4
@@ -240,6 +192,362 @@ types:
   # ENDSIMPLESPRITEINST
   # object_type_05:
 
+  # 2DSPRITEDEF
+  object_type_06:
+    doc: |
+      #### Example
+      ```
+      2DSPRITEDEF
+        2DSPRITETAG I_SWORDSPRITE
+        CENTEROFFSET 0.0 1.0 0.0
+        NUMFRAMES 2
+        SLEEP 100
+        SPRITESIZE 1.0 1.0
+        NUMPITCHES 2
+        PITCH 1
+          PITCHCAP 512
+          NUMHEADINGS 2
+          HEADING 1
+            HEADINGCAP 64
+            FRAME "isword.bmp"  sword11
+            FRAME "isword.bmp"  sword11
+          ENDHEADING 1
+          HEADING 2
+            HEADINGCAP 128
+            FRAME "isword.bmp" sword21
+            FRAME "isword.bmp"  sword11
+          ENDHEADING 2
+        ENDPITCH 1
+        PITCH 2
+          PITCHCAP 256
+          NUMHEADINGS 1
+          HEADING 1
+            HEADINGCAP 64
+            FRAME "isword.bmp"  sword11
+            FRAME "isword.bmp"  sword11
+          ENDHEADING 1
+        ENDPITCH 2
+        // Default instance: render info
+        RENDERMETHOD TEXTURE3
+        // RENDERINFO block is optional
+        RENDERINFO
+          //TWOSIDED
+          PEN 52
+          BRIGHTNESS 1.000
+          SCALEDAMBIENT 1.000
+          UVORIGIN 0.5 0.4 0.3
+          UAXIS 1.0 0.22 0.33 0.44
+          VAXIS 1.0 0.25 0.35 0.45
+        ENDRENDERINFO
+      END2DSPRITEDEF
+      ```
+    meta:
+      bit-endian: le
+    seq:
+      - id: name_reference
+        type: s4
+        doc: |
+          The name of this sprite
+      - id: flags
+        type: sprite_flags
+      - id: num_frames
+        doc: |
+          The number of frames present in each heading
+        type: u4
+      - id: num_pitches
+        type: s4
+        doc: |
+          The number of pitches
+      - id: sprite_size_x
+        type: f4
+        doc: |
+          Scale the sprite by this amount in the x direction?
+      - id: sprite_size_y
+        type: f4
+        doc: |
+          Scale the sprite by this amount in the y direction?
+      - id: sphere_fragment
+        type: s4
+        doc: |
+          When SPHERE or SPHERELIST is defined this references a 0x16 fragment.
+          When POLYHEDRON is defined this references a 0x16 fragment.
+      - id: depth_scale
+        type: f4
+        if: flags.has_depth_scale
+      - id: center_offset_x
+        type: f4
+        if: flags.has_center_offset
+      - id: center_offset_y
+        type: f4
+        if: flags.has_center_offset
+      - id: bounding_radius
+        type: f4
+        if: flags.has_bounding_radius
+      - id: current_frame
+        type: u4
+        if: flags.has_current_frame
+      - id: sleep
+        type: s4
+        if: flags.has_sleep
+      - id: pitches
+        type: sprite_pitch(num_frames)
+        repeat: expr
+        repeat-expr: num_pitches
+      - id: render_method
+        type: render_method_attrs
+      - id: renderinfo_flags
+        type: render_flags
+      - id: pen
+        type: s4
+        if: renderinfo_flags.has_pen
+      - id: brightness
+        type: f4
+        if: renderinfo_flags.has_brightness
+      - id: scaled_ambient
+        type: f4
+        if: renderinfo_flags.has_scaled_ambient
+      - id: uv_info
+        type: uv_info
+        if: renderinfo_flags.has_uv_info
+    types:
+      render_method_attrs:
+        seq:
+          - id: draw_style
+            type: b2
+            enum: draw_style
+          - id: lighting
+            type: b3
+            enum: lighting
+          - id: shading
+            type: b2
+            enum: shading
+          - id: texture_style
+            type: b4
+            enum: texture_style
+          - id: unused1
+            doc: These bits cause WLDCOM.EXE to crash when decompiling if set
+            type: b5
+          - id: unused2
+            type: b15
+          - id: user_defined
+            type: b1
+        enums:
+          draw_style:
+            0b00: transparent
+            0b01: unknown
+            0b10: wireframe
+            0b11: solid
+          lighting:
+            0b000: zero_intensity
+            0b001: unknown1
+            0b010: constant
+            0b011: xxxxx
+            0b100: ambient
+            0b101: scaled_ambient
+            0b111: invalid
+          shading:
+            0b00: none1
+            0b01: none2
+            0b10: gouraud1
+            0b11: gouraud2
+          texture_style:
+            0b0001: xxxxxxxx
+            0b0010: texture1
+            0b0011: transtexture1
+            0b0100: texture2
+            0b0101: transtexture2
+            0b0110: texture3
+            0b0111: xxxxxxxx
+            0b1000: texture4
+            0b1001: transtexture4
+            0b1010: texture5
+            0b1011: transtexture5
+            0b1100: unknown1
+            0b1101: unknown2
+            0b1110: unknown3
+            0b1111: xxxxx
+      sprite_flags:
+        seq:
+          - id: has_center_offset
+            type: b1
+          - id: has_bounding_radius
+            type: b1
+          - id: has_current_frame
+            type: b1
+          - id: has_sleep
+            type: b1
+          - id: flag04
+            type: b1
+          - id: flag05
+            type: b1
+          - id: skip_frames
+            type: b1
+          - id: has_depth_scale
+            type: b1
+          - id: flag08
+            type: b1
+          - id: flag09
+            type: b1
+          - id: flag10
+            type: b1
+          - id: flag11
+            type: b1
+          - id: flag12
+            type: b1
+          - id: flag13
+            type: b1
+          - id: flag14
+            type: b1
+          - id: flag15
+            type: b1
+          - id: flag16
+            type: b1
+          - id: flag17
+            type: b1
+          - id: flag18
+            type: b1
+          - id: flag19
+            type: b1
+          - id: flag20
+            type: b1
+          - id: flag21
+            type: b1
+          - id: flag22
+            type: b1
+          - id: flag23
+            type: b1
+          - id: flag24
+            type: b1
+          - id: flag25
+            type: b1
+          - id: flag26
+            type: b1
+          - id: flag27
+            type: b1
+          - id: flag28
+            type: b1
+          - id: flag29
+            type: b1
+          - id: flag30
+            type: b1
+          - id: flag31
+            type: b1
+      sprite_pitch:
+        params:
+          - id: num_frames
+            type: u4
+        seq:
+          - id: pitch_cap
+            type: s4
+          - id: num_headings
+            type: b31
+          - id: top_or_bottom_view
+            type: b1
+          - id: headings
+            type: sprite_heading(num_frames)
+            repeat: expr
+            repeat-expr: num_headings
+      sprite_heading:
+        params:
+          - id: num_frames
+            type: u4
+        seq:
+          - id: heading_cap
+            type: s4
+          - id: frames
+            type: u4
+            repeat: expr
+            repeat-expr: num_frames
+      render_flags:
+        seq:
+          - id: has_pen
+            type: b1
+          - id: has_brightness
+            type: b1
+          - id: has_scaled_ambient
+            type: b1
+          - id: flag03
+            type: b1
+          - id: has_uv_info
+            type: b1
+          - id: flag05
+            type: b1
+          - id: flag06
+            type: b1
+          - id: flag07
+            type: b1
+          - id: flag08
+            type: b1
+          - id: flag09
+            type: b1
+          - id: flag10
+            type: b1
+          - id: flag11
+            type: b1
+          - id: flag12
+            type: b1
+          - id: flag13
+            type: b1
+          - id: flag14
+            type: b1
+          - id: flag15
+            type: b1
+          - id: flag16
+            type: b1
+          - id: flag17
+            type: b1
+          - id: flag18
+            type: b1
+          - id: flag19
+            type: b1
+          - id: flag20
+            type: b1
+          - id: flag21
+            type: b1
+          - id: flag22
+            type: b1
+          - id: flag23
+            type: b1
+          - id: flag24
+            type: b1
+          - id: flag25
+            type: b1
+          - id: flag26
+            type: b1
+          - id: flag27
+            type: b1
+          - id: flag28
+            type: b1
+          - id: flag29
+            type: b1
+          - id: flag30
+            type: b1
+          - id: flag31
+            type: b1
+      uv_info:
+        seq:
+          - id: uv_origin_x
+            type: f4
+          - id: uv_origin_y
+            type: f4
+          - id: uv_origin_z
+            type: f4
+          - id: u_axis_x
+            type: f4
+          - id: u_axis_y
+            type: f4
+          - id: u_axis_z
+            type: f4
+          - id: v_axis_x
+            type: f4
+          - id: v_axis_y
+            type: f4
+          - id: v_axis_z
+            type: f4
+    instances:
+      name:
+        type: string_hash_reference(name_reference)
+
   # Added by 3DSPRITEDEF
   # massive - the whole bsp nodes and everything.
   object_type_08:
@@ -263,7 +571,26 @@ types:
         type: frame_transform
         repeat: expr
         repeat-expr: frame_count
-      # TODO: handle fields added by flags
+        # TODO: handle fields added by flags
+    types:
+      frame_transform:
+        seq:
+          - id: rotate_denominator
+            type: f4
+          - id: rotate_x_numerator
+            type: f4
+          - id: rotate_y_numerator
+            type: f4
+          - id: rotate_z_numerator
+            type: f4
+          - id: shift_x_numerator
+            type: f4
+          - id: shift_y_numerator
+            type: f4
+          - id: shift_z_numerator
+            type: f4
+          - id: shift_denominator
+            type: f4
 
     instances:
       name:
@@ -297,19 +624,70 @@ types:
       reverse:
         value: (flags & 0b10) >> 1 == 1
 
-  # Added by 3DSPRITEDEF
+  # SPHERE
+  object_type_16:
+    seq:
+      - id: name_reference
+        type: s4
+      - id: radius
+        type: f4
+
+  # POLYHEDRON
+  object_type_18:
+    seq:
+      - id: tag_reference
+        type: s4
+      - id: definition_reference
+        type: s4
+      - id: polyhedron_flags
+        type: polyhedron_flags
+      - id: scale_factor
+        type: f4
+        if: polyhedron_flags.has_scale_factor
+    meta:
+      bit-endian: le
+    types:
+      polyhedron_flags:
+        seq:
+          - id: has_scale_factor
+            type: b1
+          - id: ukn
+            type: b31
+    instances:
+      tag:
+        type: string_hash_reference(tag_reference)
+      definition:
+        type: string_hash_reference(definition_reference)
+
+  # SPHERELIST
   # No idea what this one is trying to do, will need to see if changing the file changes this object.
   # maybe this is the spherelist def?
   # could check mapedit for an example spherelist with more data
   object_type_1a:
     seq:
-      - id: unk1
-        type: u4
-      # might be a name_ref
-      - id: unk2
+      - id: tag_reference
         type: s4
-      - id: unk3
-        type: u4
+      - id: definition_reference
+        type: s4
+      - id: sphere_list_flags
+        type: sphere_list_flags
+      - id: scale_factor
+        type: f4
+        if: sphere_list_flags.has_scale_factor
+    meta:
+      bit-endian: le
+    types:
+      sphere_list_flags:
+        seq:
+          - id: has_scale_factor
+            type: b1
+          - id: ukn
+            type: b31
+    instances:
+      tag:
+        type: string_hash_reference(tag_reference)
+      definition:
+        type: string_hash_reference(definition_reference)
 
   # LIGHTDEFINITION
   # unable to test CURRENTFRAME or multiple frames/colors.
@@ -344,6 +722,16 @@ types:
         repeat: expr
         repeat-expr: frame_count
         if: (flags & 0b1010) != 0 and frame_count != 0
+
+    types:
+      color_rgb:
+        seq:
+          - id: red
+            type: f4
+          - id: green
+            type: f4
+          - id: blue
+            type: f4
 
     instances:
       name:
@@ -383,6 +771,33 @@ types:
         type: world_node
         repeat: expr
         repeat-expr: world_node_count
+    types:
+      world_node:
+        seq:
+          # NORMALABCD %f %f %f %f
+          - id: normal_a
+            type: f4
+          - id: normal_b
+            type: f4
+          - id: normal_c
+            type: f4
+          - id: normal_d
+            type: f4
+
+          # WORLDREGIONTAG %d
+          - id: region_tag
+            type: u4
+          # TODO: revisit with more examples and add conditions when region isn't zero
+
+          # FRONTTREE %d
+          - id: front_tree
+            type: u4
+            if: region_tag == 0
+
+          # BACKTREE %d
+          - id: back_tree
+            type: u4
+            if: region_tag == 0
 
   # POINTLIGHT
   object_type_28:
@@ -436,4 +851,3 @@ types:
         value: (flags & 0b1000000) != 0
 
   # # object_type_unknown:
-
