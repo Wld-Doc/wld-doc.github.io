@@ -18,6 +18,20 @@
 
     OBSTACLE
       GEOMETRYCUTTINGOBSTACLE
+
+      XY_VERTEX 0 %d
+      XYZ_VERTEX 0 %d
+      XY_LINE 0 %d %d
+      XY_EDGE 0 %d %d
+      XYZ_EDGE 0 %d %d
+      PLANE 0 %d
+      EDGEWALL 0 %d
+
+      EDGEPOLYGON 0
+      NORMALABCD %f %f %f %f
+      NUMVERTICES %d
+      VERTEXLIST %d+
+
       NEXTREGION %d
       FLOOR
       USERDATA "%s"
