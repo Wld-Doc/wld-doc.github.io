@@ -10,9 +10,11 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@nuxt/content-theme-docs": "0.10.1",
-    "file-type": "^16.5.0",
-    "kaitai-struct": "^0.9.0",
+    "@nuxt/content-theme-docs": "0.11.1",
+    "file-saver": "^2.0.5",
+    "file-type": "16.5.4",
+    "jszip": "^3.10.1",
+    "kaitai-struct": "^0.10.0",
     "nuxt": "^2.15.2",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
