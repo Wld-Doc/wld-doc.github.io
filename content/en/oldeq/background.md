@@ -53,7 +53,11 @@ Released as part of the [second anniversary celebration](https://web.archive.org
 <video controls="true" allowfullscreen="true" poster="/eq-mov.png" style="margin: 0 auto; width: 480px;">
   <source src="/EQ.mp4" type="video/mp4">
 </video> -->
-<iframe src="https://streamable.com/e/2vnev3" width="480" height="360" frameborder="0" allowfullscreen style="margin: 0 auto;"></iframe>
+<!-- <iframe src="https://streamable.com/e/2vnev3" width="480" height="360" frameborder="0" allowfullscreen style="margin: 0 auto;"></iframe> -->
+
+<video controls="true" allowfullscreen="true" poster="/eq-mov.png" style="margin: 0 auto; width: 480px;">
+  <source src="https://user-images.githubusercontent.com/913141/197358847-8545c2a9-8494-4c49-92af-e5f7c1574148.mp4" type="video/mp4">
+</video>
 
 ### Screensaver
 
