@@ -1,1 +1,5 @@
 .container { max-width: 100% !important; }
+
+iframe.imgur-embed-iframe-pub {
+  margin: auto !important;
+}

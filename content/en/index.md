@@ -14,6 +14,9 @@ This is very much a WIP.
 While quite a bit is already known \(see Windcatcher's [WLD File Reference](https://docs.eqemu.io/server/zones/customizing-zones/wld-file-reference)\), I
 wanted to document my attempts at leveraging other games and files to further define the format and share some interesting things I found along the way.
 
+<div class="mx-auto">
+<blockquote class="imgur-embed-pub" lang="en" data-id="a/Apy5q9m" data-context="false" ><a href="//imgur.com/a/Apy5q9m">Pyrologo</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+</div>
 
 ## Topics
 
