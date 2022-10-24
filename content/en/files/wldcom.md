@@ -144,6 +144,28 @@ Usage:  WLDCOM [-flags] infile [outfile]
   </code-block>
 </code-group>
 
+## Invalid object types
+
+Attemping to decompress a file containing an object type of `0x2c+` will fail.
+
+```
+> WLDCOM.EXE -d infile.bin.wld outfile.ascii.wld
+Game WLD file compressor v1.47, Copyright 1995-1996 PyroTechnix, Inc.
+Uncompressing...
+invalid object type (30) encountered
+```
+
+WLDCOM.EXE can be patched to prevent the invalid object types from halting the decompression by replacing `e8 58 48 00 00` at byte offset `0x6583` with `31 c0 90 90 90`.
+
+This patch is also availiable to download in ["International Patching System"](http://justsolve.archiveteam.org/wiki/IPS_(binary_patch_format)) format [WLDCOM.ips](/files/WLDCOM.ips)
+
+  ```hexdump[WLDCOM.ips]
+00000000  50 41 54 43 48 00 65 83  00 05 31 c0 90 90 90 45  |PATCH.e...1....E|
+00000010  4f 46                                             |OF|
+  ```
+
+The process will still fail but will also write some of the ASCII file output.
+
 ## Parser Demo
 
 Parse a binary (compressed) wld file with [client side JS](/kaitai/js-parsers#sonywldjs) generated from [sony_wld.ksy](/kaitai/structs#sony_wldksy)
