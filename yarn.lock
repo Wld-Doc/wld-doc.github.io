@@ -1941,9 +1941,9 @@
     tailwindcss "^1.9.6"
     ufo "^0.6.9"
 
-"@nuxtjs/tailwindcss@https://github.com/rchl/nuxtjs-tailwindcss#fix/nuxt-2":
+"@nuxtjs/tailwindcss@https://github.com/nickgal/tailwindcss#nuxt-2-16-3":
   version "3.4.3"
-  resolved "https://github.com/rchl/nuxtjs-tailwindcss#2ddd4c7ba4180354f26b755cf9c031cd33bf0503"
+  resolved "https://github.com/nickgal/tailwindcss#f2cfcfb7c25279004d0340e4f91ff7079b17d3bb"
   dependencies:
     chalk "^4.1.0"
     clear-module "^4.1.2"
