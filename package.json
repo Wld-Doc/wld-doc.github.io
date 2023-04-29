@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@nuxt/content-theme-docs": "0.11.1",
+    "@nuxtjs/tailwindcss": "https://github.com/rchl/nuxtjs-tailwindcss#fix/nuxt-2",
     "file-saver": "^2.0.5",
     "file-type": "16.5.4",
     "jszip": "^3.10.1",
