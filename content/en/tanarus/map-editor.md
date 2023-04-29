@@ -161,4 +161,14 @@ Archive:  Basic_MapEdit.zip
 
 ![Export Menu](https://web.archive.org/web/20010122061700im_/http://tanarus.station.sony.com/mapeditor/Image49.gif)
 
+### Generated ASCII WLD from default map
 
+<code-group>
+  <code-block label="tanarus-mapedit.wad" active>
+
+  ```c[tanarus-mapedit.wad]
+  source:tanarus-mapedit.wad
+  ```
+
+  </code-block>
+</code-group>
