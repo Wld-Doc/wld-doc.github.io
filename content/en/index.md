@@ -15,7 +15,7 @@ While quite a bit is already known \(see Windcatcher's [WLD File Reference](http
 wanted to document my attempts at leveraging other games and files to further define the format and share some interesting things I found along the way.
 
 <div class="flex items-center justify-center">
-  <blockquote class="imgur-embed-pub" lang="en" data-id="a/Apy5q9m" data-context="false" ><a href="//imgur.com/a/Apy5q9m">Pyrologo</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+  <img src="/pyro.webp" alt="Pyrotechnix logo" />
 </div>
 
 ## Topics
