@@ -157,9 +157,10 @@ invalid object type (30) encountered
 
 WLDCOM.EXE can be patched to prevent the invalid object types from halting the decompression by replacing `e8 58 48 00 00` at byte offset `0x6583` with `31 c0 90 90 90`.
 
-This patch is also availiable to download in ["International Patching System"](http://justsolve.archiveteam.org/wiki/IPS_(binary_patch_format)) format [WLDCOM.ips](/files/WLDCOM.ips)
+This patch is also availiable to download in ["International Patching System"](http://justsolve.archiveteam.org/wiki/IPS_(binary_patch_format)) format
+<a href="/files/wldcom.ips" target="_blank" download="wldcom.ips">wldcom.ips</a>
 
-  ```hexdump[WLDCOM.ips]
+  ```hexdump[wldcom.ips]
 00000000  50 41 54 43 48 00 65 83  00 05 31 c0 90 90 90 45  |PATCH.e...1....E|
 00000010  4f 46                                             |OF|
   ```
