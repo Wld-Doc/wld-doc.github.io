@@ -385,9 +385,14 @@ ACTORINST
 
   source:partials/SPHERE.txt
 
+  // It appears that spritesize can be used instead of boundingradius and scalefactor
+  // trying both returns "sprite size illegal with bounding radius & scale factor"
+  // SPRITESIZE %f %f
+
   BOUNDINGRADIUS %f
   SCALEFACTOR %f
   SOUND "%s"
+  USERDATA "%s"
 ENDACTORINST
 ```
 
