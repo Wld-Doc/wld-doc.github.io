@@ -5,6 +5,8 @@ position: 10
 category: formats
 ---
 
+## Overview
+
 Source [DirectX 5 SDK](https://archive.org/details/idx5sdk)
 
 
@@ -60,3 +62,9 @@ Source [DirectX 5 SDK](https://archive.org/details/idx5sdk)
 
   </code-block>
 </code-group>
+
+## JS Parser
+
+Generated from [Fastfile.ksy](/kaitai/structs#fastfileksy).
+
+<t3d-file t3d-type="fastfile"></t3d-file>

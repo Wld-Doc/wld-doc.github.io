@@ -27,5 +27,5 @@ category: formats
 
   - [oldeq](/oldeq/background)
   - [Tanarus](/tanarus/background)
-  - [Return to Krondor](/tanarus/background)
+  - [Return to Krondor](/return-to-krondor/background)
   - EverQuest

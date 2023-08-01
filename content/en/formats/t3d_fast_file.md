@@ -23,7 +23,7 @@ Magic `02 3d ff ff`
 ## Games
 
   - [Tanarus](/tanarus/background)
-  - [Return to Krondor](/tanarus/background)
+  - [Return to Krondor](/return-to-krondor/background)
 
 ### Kaitai Struct
 
