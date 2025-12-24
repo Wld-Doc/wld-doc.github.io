@@ -7,7 +7,7 @@ category: files
 
 Found in the map editor for Tanarus [Basic_MapEdit.zip](/tanarus/map-editor)
 
-See [T3dFastFile](/formats/t3dFastFile) for more information regarding the file format.
+See [T3dFastFile](/formats/t3d_fast_file) for more information regarding the file format.
 
 ## Usage
 
